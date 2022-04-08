@@ -1,0 +1,10 @@
+# FROM nginx:alpine
+FROM node:alpine
+# COPY default.conf /etc/nginx/conf.d/
+# COPY dist /usr/share/nginx/html
+WORKDIR /usr/src/
+RUN npm install -g pm2 serve
+
+# Add your source files
+# COPY . .  
+# CMD ["pm2", "serve", "dist", "3000"]

@@ -1,0 +1,9 @@
+FROM node:latest
+
+RUN (apt update &&  apt upgrade -y )\
+    && (apt install -y vim && apt install -y net-tools)
+RUN apt install -y nginx
+RUN npm install -g pm2 serve
+WORKDIR /usr/src/
+COPY default.conf /etc/nginx/conf.d/
+# CMD ["nginx"]

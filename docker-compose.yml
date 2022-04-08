@@ -1,0 +1,68 @@
+version: '2'
+
+networks:
+  ChemiCloud:
+    driver: bridge
+    ipam:
+      # driver: default
+      config:
+        - subnet: 172.18.18.0/24
+          # - subnet: 10.5.0.0/16
+          gateway: 172.18.18.1
+
+services:
+  core:
+    container_name: explosive_core
+    networks:
+      ChemiCloud:
+        ipv4_address: 172.18.18.2
+    build:
+      context: .
+      dockerfile: Dockerfile.core
+    stdin_open: true
+    tty: true
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    volumes:
+      - ./main:/usr/src/main
+    command: "/root/miniconda3/envs/py310/bin/uvicorn runApiServer:app --port 8000 --host 0.0.0.0"
+      # - "bash"
+      # - "/root/miniconda3/envs/py310/bin/uvicorn runApiServer:app --port 8000 --host 0.0.0.0"
+
+  mongodb:
+    depends_on:
+      - core
+    image: mongo:latest
+    container_name: explosive_mongo
+    networks:
+      ChemiCloud:
+        ipv4_address: 172.18.18.3
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data/db
+
+  frontend:
+    container_name: explosive_frontend
+    depends_on:
+      - core
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    networks:
+      ChemiCloud:
+        ipv4_address: 172.18.18.4
+    expose:
+      - 8888
+    ports:
+      - 8888:8888
+    volumes:
+      # - ./dist:/usr/share/nginx/html
+      - ./dist:/usr/src/dist
+    # command: bash -c 'serve dist && nginx -g daemon off; '
+    command: 'pm2 serve dist 3000 && nginx -g "daemon off;" '
+    # command: 'nginx && serve dist'

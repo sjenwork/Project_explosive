@@ -1,0 +1,32 @@
+version: '2'
+networks:
+  ChemiCloud:
+    driver: bridge
+    ipam:
+      # driver: default
+      config:
+        - subnet: 172.18.18.0/24
+          # - subnet: 10.5.0.0/16
+          gateway: 172.18.18.1
+
+services:
+  nginx:
+    container_name: nginx_test
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - 8888:80
+    tty: true
+    command: 'nginx -g "daemon off;"'
+  # nginx:
+  #   container_name: nginx_test
+  #   # image: nginx:latest
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   ports:
+  #     - 8888:80
+  #   networks:
+  #     ChemiCloud:
+  #       ipv4_address: 172.18.18.5
