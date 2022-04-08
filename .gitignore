@@ -1,5 +1,6 @@
 data/
 *.ini
+Miniconda3-latest-Linux-x86_64.sh
 
 ############ from https://github.com/github/gitignore/blob/main/Python.gitignore #######
 # Byte-compiled / optimized / DLL files
